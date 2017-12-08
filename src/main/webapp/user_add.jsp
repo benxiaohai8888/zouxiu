@@ -1,0 +1,853 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<HTML>
+<HEAD>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="imagetoolbar" content="no">
+<link href="resources/css/jquery-ui-themes.css" type="text/css"
+	rel="stylesheet">
+<link href="resources/css/axure_rp_page.css" type="text/css"
+	rel="stylesheet">
+<link href="useradd_files/axurerp_pagespecificstyles.css"
+	type="text/css" rel="stylesheet">
+
+<SCRIPT src="resources/scripts/jquery-1.4.2.min.js"></SCRIPT>
+<SCRIPT src="resources/scripts/jquery-ui-1.8.10.custom.min.js"></SCRIPT>
+<SCRIPT src="resources/scripts/axurerp_beforepagescript.js"></SCRIPT>
+<SCRIPT src="resources/scripts/messagecenter.js"></SCRIPT>
+
+
+<SCRIPT src="js/json2.js" type="text/javascript"></SCRIPT>
+<SCRIPT src="js/jquery-2.0.0.js" type="text/javascript"></SCRIPT>
+<!--  Ajax请求省市县数据-->
+<script type="text/javascript">
+	/*   area */
+	$(function() {
+		$("#provinces")
+				.change(
+						function() {
+							/* 清除市和区域的内容 */
+							document.getElementById("city").options.length = 0;
+							document.getElementById("area").options.length = 0;
+							document.getElementById("area").add(
+									new Option("区域", "区域"));
+							$.ajax({
+								url : "findCityByProvinceId",//请求的url  
+								type : "post",//请求方式  
+								data : {//传递的数据  
+									"provinceId" : $(this).val()
+								},
+								dataType : "json",//后台数据返回类型  
+								success : function(data) {//响应成功执行的方法  
+									/* 	var adrs =eval("(" + data + ")"); js原生态解析json */
+									var c = JSON.parse(data);
+									document.getElementById("city").add(
+											new Option("城市", "城市"));
+									//设置下拉列表的选项个数  
+									for (var i = 0; i < c.length; i++) {
+										document.getElementById("city").add(
+												new Option(c[i].city,
+														c[i].cityId));
+									}
+								},
+								error : function() {//出现异常执行方法  
+									alert("出现异常啦...");
+								}
+							});
+						});
+
+		$("#city").change(
+				function() {
+					document.getElementById("area").options.length = 0;
+					$.ajax({
+						url : "findAreaByCityId",//请求的url  
+						type : "post",//请求方式  
+						data : {//传递的数据  
+							"cityId" : $(this).val()
+						},
+						dataType : "json",//后台数据返回类型  
+						success : function(data) {//响应成功执行的方法  
+							var c = JSON.parse(data);
+							document.getElementById("area").add(
+									new Option("区域", "区域"));
+							//设置下拉列表的选项个数  
+							for (var i = 0; i < c.length; i++) {
+								document.getElementById("area").add(
+										new Option(c[i].area, c[i].areaId));
+							}
+						},
+						error : function() {//出现异常执行方法  
+							alert("出现异常啦...");
+						}
+					});
+				});
+	});
+
+	//检查用户名是否被注册
+	$(function() {
+		$("#checkloinname").click(function() {
+			$.ajax({
+				url : "checkLoginName",//请求的url  
+				type : "post",//请求方式  
+				data : {//传递的数据  
+					"loginName" : $("#loginName").val()
+				},
+				dataType : "text",//后台数据返回类型  
+				success : function(data) {//响应成功执行的方法  
+					var result = data.substring(1, data.length - 1);
+					if (result != null) {
+						$("#tips").html(result);
+					} else {
+						$("#tips").html(result);
+					}
+				},
+				error : function() {//出现异常执行方法  
+					alert("出现异常啦...");
+				}
+			});
+		});
+
+		//提交表单
+		$("#btn").click(function() {
+			if ($("#loginName").val()=="") {
+				alert("用户名不能为空");
+				return false;
+			}
+			adduserform.submit();
+		});
+	});
+</script>
+</HEAD>
+<BODY>
+
+	<DIV class="main_container">
+
+		<DIV id=u0_container class="u0_container">
+			<DIV id="u0_img" class="u0_original"></DIV>
+			<DIV id=u1 class="u1">
+				<DIV id=u1_rtf>&nbsp;</DIV>
+			</DIV>
+		</DIV>
+		<IMG id=u0 src="resources/images/transparent.gif" class="u0">
+
+		<DIV id=u2_menu class="u2_menu"></DIV>
+
+		<IMG id=u2 src="resources/images/transparent.gif"
+			style="position: absolute; left: 5px; top: 14px; width: 1031px; height: 67px">
+
+		<DIV id=u2container
+			style="position: absolute; left: 5px; top: 14px; width: 1031px; height: 67px;; overflow: visible">
+
+			<DIV id=u3 class="u3;">
+
+				<DIV id=u3_table class="u3_table"></DIV>
+
+			</DIV>
+
+			<DIV id=u3container
+				style="position: absolute; left: 3px; top: 3px; width: 1030px; height: 66px; overflow: visible">
+
+				<DIV id=u4_container class="u4_container">
+					<DIV id=u5 class="u5">
+						<DIV id=u5_rtf>&nbsp;</DIV>
+					</DIV>
+				</DIV>
+				<IMG id=u4 src="resources/images/transparent.gif" class="u4">
+
+			</DIV>
+		</DIV>
+		<DIV id=u6_container class="u6_container">
+			<DIV id="u6_img" class="u6_original"></DIV>
+			<DIV id=u7 class="u7">
+				<DIV id=u7_rtf>&nbsp;</DIV>
+			</DIV>
+		</DIV>
+		<IMG id=u6 src="resources/images/transparent.gif" class="u6">
+
+		<DIV id=u8 class="u8">
+			<DIV id=u8_rtf>
+				<p style="text-align: left;">
+					<span
+						style="font-family: 宋体; font-size: 24px; font-weight: bold; font-style: normal; text-decoration: none; color: #000000;">客户服务中心</span>
+				</p>
+			</DIV>
+		</DIV>
+		<DIV id=u9 class="u9">
+			<DIV id=u9_rtf>
+				<p style="text-align: left;">
+					<span
+						style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">朱培阳
+						用户，欢迎您!</span>
+				</p>
+			</DIV>
+		</DIV>
+		<DIV id=u10 class="u10">
+			<DIV id=u10_rtf>
+				<p style="text-align: left;">
+					<span
+						style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #0000FF;">个人设置</span>
+				</p>
+			</DIV>
+		</DIV>
+		<DIV id=u11_container class="u11_container">
+			<DIV id="u11_img" class="u11_original"></DIV>
+			<DIV id=u12 class="u12">
+				<DIV id=u12_rtf>
+					<p style="text-align: center;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: bold; font-style: normal; text-decoration: none; color: #000000;">咨询</span>
+					</p>
+				</DIV>
+			</DIV>
+		</DIV>
+		<INPUT type="image" id=u11 src="resources/images/transparent.gif"
+			class="u11">
+
+		<DIV id=u13 class="u13">
+			<DIV id=u13_rtf>
+				<p style="text-align: left;">
+					<span
+						style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #0000FF;">即时消息（</span><span
+						style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: underline; color: #FF0000;">1</span><span
+						style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #0000FF;">）</span>
+				</p>
+			</DIV>
+		</DIV>
+		<DIV id=u14_container class="u14_container">
+			<DIV id="u14_img" class="u14_original"></DIV>
+			<DIV id=u15 class="u15">
+				<DIV id=u15_rtf>
+					<p style="text-align: center;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: bold; font-style: normal; text-decoration: none; color: #000000;">投诉</span>
+					</p>
+				</DIV>
+			</DIV>
+		</DIV>
+		<INPUT type="image" id=u14 src="resources/images/transparent.gif"
+			class="u14">
+
+		<DIV id=u16_container class="u16_container">
+			<DIV id="u16_img" class="u16_original"></DIV>
+			<DIV id=u17 class="u17">
+				<DIV id=u17_rtf>
+					<p style="text-align: center;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: bold; font-style: normal; text-decoration: none; color: #000000;">建议</span>
+					</p>
+				</DIV>
+			</DIV>
+		</DIV>
+		<INPUT type="image" id=u16 src="resources/images/transparent.gif"
+			class="u16">
+
+		<DIV id=u18_container class="u18_container">
+			<DIV id="u18_img" class="u18_original"></DIV>
+			<DIV id=u19 class="u19">
+				<DIV id=u19_rtf>
+					<p style="text-align: center;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: bold; font-style: normal; text-decoration: none; color: #000000;">分类管理</span>
+					</p>
+				</DIV>
+			</DIV>
+		</DIV>
+		<INPUT type="image" id=u18 src="resources/images/transparent.gif"
+			class="u18">
+
+		<DIV id=u20_container class="u20_container">
+			<DIV id="u20_img" class="u20_original"></DIV>
+			<DIV id=u21 class="u21">
+				<DIV id=u21_rtf>
+					<p style="text-align: center;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: bold; font-style: normal; text-decoration: none; color: #000000;">用户管理</span>
+					</p>
+				</DIV>
+			</DIV>
+		</DIV>
+		<INPUT type="image" id=u20 src="resources/images/transparent.gif"
+			class="u20">
+
+		<DIV id=u22_container class="u22_container">
+			<DIV id="u22_img" class="u22_original"></DIV>
+			<DIV id=u23 class="u23">
+				<DIV id=u23_rtf>
+					<p style="text-align: center;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: bold; font-style: normal; text-decoration: none; color: #000000;">站内信管理</span>
+					</p>
+				</DIV>
+			</DIV>
+		</DIV>
+		<INPUT type="image" id=u22 src="resources/images/transparent.gif"
+			class="u22">
+
+		<DIV id=u24
+			style="border-style: dotted; border-color: red; visibility: hidden;; position: absolute; left: 0px; top: 0px; width: 1256px; height: 3212px;"></div>
+		<DIV id=u25_container class="u25_container">
+			<DIV id="u25_img" class="u25_original"></DIV>
+			<DIV id=u26 class="u26">
+				<DIV id=u26_rtf>&nbsp;</DIV>
+			</DIV>
+		</DIV>
+		<IMG id=u25 src="resources/images/transparent.gif" class="u25">
+
+		<DIV id=u27 class="u27">
+			<DIV id=u27_rtf>
+				<p style="text-align: left;">
+					<span
+						style="font-family: 宋体; font-size: 13px; font-weight: bold; font-style: normal; text-decoration: none; color: #000000;">添加客户</span>
+				</p>
+			</DIV>
+		</DIV>
+
+
+		<!--提交的内容  -->
+		<form action="user_add" method="post" id="adduserform"
+			name="adduserform">
+
+			<DIV id=u28 class="u28">
+				<DIV id=u28_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">用户名：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<INPUT id="loginName" type=text value="" class="u29"
+				name="user.loginName">
+
+			<DIV id=u30 class="u30">
+				<DIV id=u30_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">邮箱：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<INPUT id=u31 type=text value="" class="u31" name="user.email">
+
+			<DIV id=u32 class="u32">
+				<DIV id=u32_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">手机号码：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<INPUT id=u33 type=text value="" class="u33" name="user.phone">
+
+			<DIV id=u34 class="u34">
+				<DIV id=u34_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">固定号码：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<INPUT id=u35 type=text value="" class="u35" name="user.fixphone">
+
+			<DIV id=u36 class="u36">
+				<DIV id=u36_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">地址：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<SELECT id="provinces" class="u37" name="user.provinces">
+				<OPTION selected value="省份">省份</OPTION>
+				<c:forEach items="${allProvince }" var="p">
+					<OPTION value="${p.provinceId }">${p.province }</OPTION>
+				</c:forEach>
+			</SELECT> <select id="city" class="u38" name="user.cities">
+				<option value="城市">城市</option>
+			</select> <SELECT id="area" class="u39" name="user.area">
+				<option value="区域">区域</option>
+			</SELECT> <INPUT id=u40 type=text value="" class="u40" name="user.address">
+
+			<DIV id=u41 class="u41">
+				<DIV id=u41_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">来源方式：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u42 class="u42">
+				<DIV id=u42_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: underline; color: #0000FF;"
+							id="checkloinname">检测帐号是否被使用</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u43 class="u43">
+				<DIV id=u43_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: Arial; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #FF0000;">(</span><span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #FF0000;"
+							id="tips">恭喜你，帐号可以使用</span><span>)</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u44 class="u44">
+				<DIV id=u44_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">（必填）</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u45 class="u45">
+				<DIV id=u45_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">姓名：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u46 class="u46">
+				<DIV id=u46_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">姓别：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u47 class="u47">
+				<DIV id=u47_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">生日：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<INPUT id=u48 type=text value="" class="u48" name="user.realName">
+			<SELECT id=u49 class="u49">
+				<OPTION selected value="1990">1990</OPTION>
+				<OPTION selected value="1991">1991</OPTION>
+				<OPTION selected value="1992">1992</OPTION>
+				<OPTION selected value="1993">1993</OPTION>
+				<OPTION selected value="1994">1994</OPTION>
+			</SELECT> <SELECT id=u50 class="u50">
+				<OPTION selected value="1">1</OPTION>
+				<OPTION value="2">2</OPTION>
+				<OPTION value="3">3</OPTION>
+				<OPTION value="4">4</OPTION>
+				<OPTION value="5">5</OPTION>
+				<OPTION value="6">6</OPTION>
+				<OPTION value="7">7</OPTION>
+				<OPTION value="8">8</OPTION>
+				<OPTION value="9">9</OPTION>
+				<OPTION value="10">10</OPTION>
+				<OPTION value="11">11</OPTION>
+				<OPTION value="12">12</OPTION>
+			</SELECT>
+
+			<DIV id=u51 class="u51">
+				<DIV id=u51_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">年</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u52 class="u52">
+				<DIV id=u52_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">月</span>
+					</p>
+				</DIV>
+			</DIV>
+			<SELECT id=u53 class="u53">
+				<OPTION selected value="1">1</OPTION>
+				<OPTION value="2">2</OPTION>
+				<OPTION value="3">3</OPTION>
+				<OPTION value="4">4</OPTION>
+				<OPTION value="5">5</OPTION>
+				<OPTION value="6">6</OPTION>
+				<OPTION value="7">7</OPTION>
+				<OPTION value="8">8</OPTION>
+				<OPTION value="9">9</OPTION>
+				<OPTION value="10">10</OPTION>
+				<OPTION value="11">11</OPTION>
+				<OPTION value="12">12</OPTION>
+			</SELECT>
+
+			<DIV id=u54 class="u54">
+				<DIV id=u54_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">日</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u55container
+				style="position: absolute; left: 86px; top: 442px; width: 100px; height: 17px;">
+				<LABEL for=u55>
+					<DIV id=u56 class="u56">
+						<DIV id=u56_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">男</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u55 name="user.gender"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="男">
+			</DIV>
+			<DIV id=u57container
+				style="position: absolute; left: 144px; top: 441px; width: 100px; height: 17px;">
+				<LABEL for=u57>
+					<DIV id=u58 class="u58">
+						<DIV id=u58_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">女</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u57 name="user.gender"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="女">
+			</DIV>
+			<INPUT id="btn" type=button class="u59" value="提交"> <INPUT
+				id=u60 type=reset class="u60" value="取消"> <SELECT id=u61
+				class="u61" name="user.sourcePattern">
+				<OPTION selected value="来源方式一">来源方式一</OPTION>
+				<OPTION value="用户注册">用户注册</OPTION>
+				<OPTION value="熟人介绍">熟人介绍</OPTION>
+				<OPTION value="EDM">EDM</OPTION>
+				<OPTION value="展会">展会</OPTION>
+			</SELECT>
+
+			<DIV id=u62 class="u62">
+				<DIV id=u62_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">（邮箱和手机两项为必填之一）</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u63 class="u63">
+				<DIV id=u63_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">（必填）</span>
+					</p>
+				</DIV>
+			</DIV>
+			<SELECT id=u64 class="u64" name="user.sourceChannel">
+				<OPTION value="所有">所有</OPTION>
+				<OPTION selected value="所属渠道">所属渠道</OPTION>
+				<OPTION value="官网">官网</OPTION>
+				<OPTION value="秀团">秀团</OPTION>
+			</SELECT>
+
+			<DIV id=u65 class="u65">
+				<DIV id=u65_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">所属渠道：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u66 class="u66">
+				<DIV id=u66_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">学历：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u67 class="u67">
+				<DIV id=u67_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">身份：</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u68container
+				style="position: absolute; left: 86px; top: 503px; width: 100px; height: 17px;">
+				<LABEL for=u68>
+					<DIV id=u69 class="u69">
+						<DIV id=u69_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">小学</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u68 name="user.education"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="小学">
+			</DIV>
+			<DIV id=u70container
+				style="position: absolute; left: 166px; top: 503px; width: 100px; height: 17px;">
+				<LABEL for=u70>
+					<DIV id=u71 class="u71">
+						<DIV id=u71_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">初中</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u70 name="user.education"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="初中">
+			</DIV>
+			<DIV id=u72container
+				style="position: absolute; left: 304px; top: 502px; width: 100px; height: 17px;">
+				<LABEL for=u72>
+					<DIV id=u73 class="u73">
+						<DIV id=u73_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">大专</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u72 name="user.education"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="大专">
+			</DIV>
+			<DIV id=u74container
+				style="position: absolute; left: 387px; top: 504px; width: 100px; height: 17px;">
+				<LABEL for=u74>
+					<DIV id=u75 class="u75">
+						<DIV id=u75_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">大学</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u74 name="user.education"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="大学">
+			</DIV>
+			<DIV id=u76container
+				style="position: absolute; left: 467px; top: 504px; width: 100px; height: 17px;">
+				<LABEL for=u76>
+					<DIV id=u77 class="u77">
+						<DIV id=u77_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">硕士以上</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u76 name="user.education"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="硕士以上">
+			</DIV>
+			<DIV id=u78container
+				style="position: absolute; left: 87px; top: 532px; width: 100px; height: 17px;">
+				<LABEL for=u78>
+					<DIV id=u79 class="u79">
+						<DIV id=u79_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">上班族</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u78 name="user.status"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="上班族">
+			</DIV>
+			<DIV id=u80container
+				style="position: absolute; left: 168px; top: 532px; width: 100px; height: 17px;">
+				<LABEL for=u80>
+					<DIV id=u81 class="u81">
+						<DIV id=u81_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">学生</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u80 name="user.status"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="学生">
+			</DIV>
+			<DIV id=u82container
+				style="position: absolute; left: 225px; top: 532px; width: 100px; height: 17px;">
+				<LABEL for=u82>
+					<DIV id=u83 class="u83">
+						<DIV id=u83_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">公务员</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u82 name="user.status"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="公务员">
+			</DIV>
+			<DIV id=u84container
+				style="position: absolute; left: 307px; top: 531px; width: 100px; height: 17px;">
+				<LABEL for=u84>
+					<DIV id=u85 class="u85">
+						<DIV id=u85_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">自由职业</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u84 name="user.status"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="自由职业">
+			</DIV>
+			<DIV id=u86container
+				style="position: absolute; left: 388px; top: 531px; width: 100px; height: 17px;">
+				<LABEL for=u86>
+					<DIV id=u87 class="u87">
+						<DIV id=u87_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">其它</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u86 name="user.status"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="其它">
+			</DIV>
+			<DIV id=u88 class="u88">
+				<DIV id=u88_rtf>
+					<p style="text-align: left;">
+						<span
+							style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">月收入:</span>
+					</p>
+				</DIV>
+			</DIV>
+			<DIV id=u89container
+				style="position: absolute; left: 86px; top: 565px; width: 100px; height: 17px;">
+				<LABEL for=u89>
+					<DIV id=u90 class="u90">
+						<DIV id=u90_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: Arial; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">2</span><span
+									style="font-family: ??; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">000</span><span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">以下</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u89 name="user.monthlyIncome"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="2000以下">
+			</DIV>
+			<DIV id=u91container
+				style="position: absolute; left: 170px; top: 564px; width: 100px; height: 16px;">
+				<LABEL for=u91>
+					<DIV id=u92 class="u92">
+						<DIV id=u92_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: Arial; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">2000-5000
+								</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u91 name="user.monthlyIncome"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="2000-5000"">
+			</DIV>
+			<DIV id=u93container
+				style="position: absolute; left: 276px; top: 563px; width: 100px; height: 16px;">
+				<LABEL for=u93>
+					<DIV id=u94 class="u94">
+						<DIV id=u94_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: Arial; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">5000-8000
+								</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u93 name="user.monthlyIncome"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="5000-8000">
+			</DIV>
+			<DIV id=u95container
+				style="position: absolute; left: 382px; top: 562px; width: 100px; height: 16px;">
+				<LABEL for=u95>
+					<DIV id=u96 class="u96">
+						<DIV id=u96_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: Arial; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">8000-10000
+								</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u95 name="user.monthlyIncome"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="8000-10000">
+			</DIV>
+			<DIV id=u97container
+				style="position: absolute; left: 496px; top: 563px; width: 100px; height: 16px;">
+				<LABEL for=u97>
+					<DIV id=u98 class="u98">
+						<DIV id=u98_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: Arial; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">10000</span><span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">以上
+								</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u97 name="user.monthlyIncome"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="10000以上">
+			</DIV>
+			<DIV id=u99container
+				style="position: absolute; left: 227px; top: 505px; width: 100px; height: 15px;">
+				<LABEL for=u99>
+					<DIV id=u100 class="u100">
+						<DIV id=u100_rtf>
+							<p style="text-align: left;">
+								<span
+									style="font-family: 宋体; font-size: 13px; font-weight: normal; font-style: normal; text-decoration: none; color: #000000;">高中</span>
+							</p>
+						</DIV>
+					</DIV>
+				</LABEL> <INPUT id=u99 name="user.education"
+					style="position: absolute; left: -3px; top: -2px;" type=radio
+					value="高中">
+			</DIV>
+
+		</form>
+
+	</DIV>
+	<DIV class=preload>
+		<img src="header_files/u0_original.png" width="1" height="1" /> <img
+			src="header_files/u2_menu.png" width="1" height="1" /> <img
+			src="header_files/u3_table.png" width="1" height="1" /> <img
+			src="header_files/u4_original.png" width="1" height="1" /> <img
+			src="header_files/u6_original.png" width="1" height="1" /> <img
+			src="header_files/u11_original.png" width="1" height="1" /> <img
+			src="header_files/u14_original.png" width="1" height="1" /> <img
+			src="header_files/u16_original.png" width="1" height="1" /> <img
+			src="header_files/u20_original.png" width="1" height="1" /> <img
+			src="useradd_files/u25_original.png" width="1" height="1" />
+	</DIV>
+
+</BODY>
+<SCRIPT src="resources/scripts/axurerp_pagescript.js"></SCRIPT>
+<SCRIPT src="useradd_files/axurerp_pagespecificscript.js"
+	charset="utf-8"></SCRIPT>

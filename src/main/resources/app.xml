@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="byName"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+
+	<!-- 引入spring注解支持 -->
+	<context:annotation-config></context:annotation-config>
+	<!-- 组件扫描的范围 -->
+	<context:component-scan base-package="cn.sz.hcq"></context:component-scan>
+
+	<!-- 这里，需要引入properties文件的内容 -->
+	<!-- 如果只需要引入一个properties文件 -->
+	<context:property-placeholder location="classpath:myconn.properties" />
+
+	<!-- 如果要引入多个properties文件 -->
+	<!-- <bean id="configurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" 
+		> <property name="locations"> <array> <value>classpath:myconn.properties</value> 
+		<value></value> </array> </property> </bean> -->
+
+
+	<!-- 数据源 -->
+	<!-- 阿里 druid数据库连接池 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		<!-- 基本属性 url、user、password -->
+		<property name="url" value="${myconn.url}" />
+		<property name="username" value="${myconn.user}" />
+		<property name="password" value="${myconn.pwd}" />
+		<property name="driverClassName" value="${myconn.driver}" />
+
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="5" />
+		<property name="minIdle" value="10" />
+		<property name="maxActive" value="20" />
+
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="60000" />
+
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
+
+		<!-- 连接泄漏处理。Druid提供了RemoveAbandanded相关配置，用来关闭长时间不使用的连接（例如忘记关闭连接）。 -->
+		<property name="removeAbandoned" value="true" />
+		<!-- 1800秒，也就是30分钟 -->
+		<property name="removeAbandonedTimeout" value="1800" />
+		<!-- 关闭abanded连接时输出错误日志 -->
+		<property name="logAbandoned" value="true" />
+
+		<!-- 配置监控统计拦截的filters, 监控统计："stat",防SQL注入："wall",组合使用： "stat,wall" -->
+		<property name="filters" value="stat" />
+	</bean>
+
+	<!-- 连接工厂 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+		scope="">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+		<property name="annotatedClasses">
+			<list>
+				<value>cn.sz.hcq.pojo.Admin</value>
+				<value>cn.sz.hcq.pojo.User</value>
+				<value>cn.sz.hcq.pojo.Log</value>
+				<value>cn.sz.hcq.pojo.Province</value>
+				<value>cn.sz.hcq.pojo.City</value>
+				<value>cn.sz.hcq.pojo.Area</value>
+			</list>
+		</property>
+	</bean>
+	<!--scope:spring创建对象的方式 singleton:单例模式，默认 prototype:多例，推荐使用 request： 每次请求都会创建一个对象 
+		session：每次会话创建一个对象 -->
+	<!-- 事务处理 -->
+	<!--配置文件形式实现事务处理： 1、准备事务处理对象 2、给定事务管理规则 3、指定事务管理的范围 -->
+	<!-- 事务对象 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<!-- 使用注解事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+</beans>
